@@ -74,8 +74,7 @@ class EncryptedRafReference(file: File, logger: ESLogger, pageSize: Int, keyProv
   /**
     * Creates and returns EncryptedTranslogStream.
     */
-  @Override
-  def translogStreamFor: TranslogStream = {
+  override def translogStreamFor: TranslogStream = {
     new EncryptedTranslogStream(pageSize, keyProvider, indexName)
   }
 }
