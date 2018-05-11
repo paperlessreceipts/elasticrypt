@@ -8,13 +8,13 @@ val assembleZip = TaskKey[File]("assembleZip")
 val zipArtifact = SettingKey[Artifact]("zipArtifact")
 
 lazy val commonSettings = Seq(
-  name := "elasticsearch-encryption-plug-in",
+  name := "elasticrypt",
   organization := "com.workday",
-  version := "1.7.0",
+  version := "1.7.0-1",
   crossScalaVersions := Seq("2.10.4", "2.11.8")
 )
 
-lazy val root = Project(id = "elasticsearch-encryption-plug-in", base = file("."))
+lazy val root = Project(id = "elasticrypt", base = file("."))
   .settings(assemblySettings: _*)
   .settings(
     commonSettings,
@@ -28,7 +28,7 @@ lazy val root = Project(id = "elasticsearch-encryption-plug-in", base = file("."
     ),
     assembleZip <<= (assembly, target, name, version) map {
       (assembledJar: File, target: File, name: String, version: String) =>
-        val artifact = target / s"$name.zip"
+        val artifact = target / s"$name-$version.zip"
         IO.write(target / "VERSION", version)
 
         val entries = Seq(
