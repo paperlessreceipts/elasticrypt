@@ -7,7 +7,7 @@
 
 package com.workday.elasticrypt.translog
 
-import java.io.{File, RandomAccessFile}
+import java.io.{File, IOException, RandomAccessFile}
 import java.nio.channels.FileChannel.MapMode
 import java.nio.channels.{FileChannel, FileLock, ReadableByteChannel, WritableByteChannel}
 import java.nio.{ByteBuffer, MappedByteBuffer}
@@ -208,7 +208,16 @@ class EncryptedFileChannel(name: String, raf: RandomAccessFile, pageSize: Int, k
     */
   override def implCloseChannel(): Unit = {
     writer.close()
-    reader.close() // Shouldn't be necessary since writer.close() invokes raf.close() but shouldn't hurt either
+    try {
+      reader.close() // Shouldn't be necessary since writer.close() invokes raf.close() but shouldn't hurt either
+    } catch {
+      case e: IOException => {
+        // Calling reader.close() might instantiate a new reader in which
+        // case the reader will attempt to read the file header. This will
+        // fail with an IOException because the RAF is already closed.
+        // Should be safe to ignore.
+      }
+    }
   }
 
 }
